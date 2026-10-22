@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1792593494135,
+      "tag": "0000_steep_paibok",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1792599735310,
+      "tag": "0001_broad_thunderbolts",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1792601961200,
+      "tag": "0002_rainy_mathemanic",
+      "breakpoints": true
+    }
+  ]
+}

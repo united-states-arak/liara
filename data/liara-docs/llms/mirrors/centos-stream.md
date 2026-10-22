@@ -1,0 +1,74 @@
+﻿Original link: https://docs.liara.ir/mirrors/centos-stream/
+
+# تنظیم میرور در سیستم عامل CentOS Stream
+
+
+لیارا برای سیستم عامل CentOS Stream، میرور زیر را ارائه می‌دهد:
+
+
+
+```bash
+http://linux-mirror.liara.ir/repository/centos/
+```
+
+
+> این میرور مخصوص `CentOS Stream` است و برای `CentOS Linux` (نسخه‌های ۷ و ۸ که پشتیبانی آن‌ها پایان یافته) در نظر گرفته نشده است. نسخه‌های پشتیبانی‌شده: `CentOS Stream 9` و `CentOS Stream 10`.
+
+برای تنظیم میرور فوق در سیستم عامل CentOS Stream خود، گام‌های زیر را طی کنید:
+
+۱. تهیه بکاپ و تنظیم میرورهای لیارا
+برای تهیه بکاپ از تنظیمات فعلی، غیرفعال کردن میرورهای فعلی و تنظیم میرور لیارا، تنها کافیست دستور زیر را اجرا کنید:
+
+```bash
+mkdir -p /etc/yum.repos.d/backup && \\
+for f in /etc/yum.repos.d/*.repo; do cp "$f" /etc/yum.repos.d/backup/ \\
+&& sed -i "s/enabled=1/enabled=0/g" "$f"; done && \\
+cat > /etc/yum.repos.d/liara-mirror.repo <<'EOF'
+[liara-baseos]
+name=Liara CentOS Stream BaseOS
+baseurl=http://linux-mirror.liara.ir/repository/centos/$releasever/BaseOS/$basearch/os/
+enabled=1
+gpgcheck=0
+[liara-appstream]
+name=Liara CentOS Stream AppStream
+baseurl=http://linux-mirror.liara.ir/repository/centos/$releasever/AppStream/$basearch/os/
+enabled=1
+gpgcheck=0
+[liara-extras]
+name=Liara CentOS Stream Extras
+baseurl=http://linux-mirror.liara.ir/repository/centos/$releasever/extras/$basearch/os/
+enabled=1
+gpgcheck=0
+EOF
+```
+
+این دستور:
+- از همه‌ی فایل‌های `/etc/yum.repos.d/*.repo` در پوشه‌ی `backup` نسخه‌ی پشتیبان می‌گیرد،
+- مخازن فعلی را غیرفعال می‌کند،
+- فایل `liara-mirror.repo` را با میرور لیارا می‌سازد.
+
+۲. آپدیت سیستم
+اکنون دستور زیر را اجرا کنید تا فهرست مخازن به‌روزرسانی شود:
+
+```bash
+yum update
+```
+
+
+
+با انجام کارهای فوق، میرور لیارا در سیستم عامل CentOS Stream شما تنظیم خواهد شد و درخواست‌های آپدیت یا دانلود پکیج به این میرور ارسال می‌شود.
+
+## بازگشت به تنظیمات قبلی
+
+اگر خواستید تنظیمات قبلی را برگردانید، دستورات زیر را اجرا کنید:
+
+
+```bash
+rm -f /etc/yum.repos.d/liara-mirror.repo
+cp -f /etc/yum.repos.d/backup/*.repo /etc/yum.repos.d/
+yum clean all && yum makecache
+```
+
+## all links
+
+[All links of docs](https://docs.liara.ir/all-links-llms.txt)

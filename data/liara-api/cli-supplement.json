@@ -1,0 +1,152 @@
+{
+ "operations": [
+  {
+   "service": "paas",
+   "method": "GET",
+   "path": "/v1/networks",
+   "summary": "List networks",
+   "description": "Networks of the account. Apps and databases require a network id. Source: Liara CLI (base.js).",
+   "body": null
+  },
+  {
+   "service": "paas",
+   "method": "POST",
+   "path": "/v1/networks",
+   "summary": "Create a network",
+   "description": "Create a network. Source: Liara CLI (commands/network/create.js).",
+   "body": {
+    "contentType": "application/json",
+    "schema": {
+     "networkName": "string - required"
+    }
+   }
+  },
+  {
+   "service": "paas",
+   "method": "GET",
+   "path": "/v1/releases/{id}",
+   "summary": "Get a release",
+   "description": "Release detail, including build queue position. Source: Liara CLI (commands/deploy.js).",
+   "body": null
+  },
+  {
+   "service": "paas",
+   "method": "POST",
+   "path": "/v1/projects/update-port",
+   "summary": "Change an app's port",
+   "description": "Source: Liara CLI (commands/app/update-port.js).",
+   "body": {
+    "contentType": "application/json",
+    "schema": {
+     "project": "string - required app name",
+     "port": "number - required"
+    }
+   }
+  },
+  {
+   "service": "iaas",
+   "method": "GET",
+   "path": "/oss",
+   "summary": "List VM operating systems",
+   "description": "Source: Liara CLI (commands/vm/create.js).",
+   "body": null
+  },
+  {
+   "service": "iaas",
+   "method": "GET",
+   "path": "/plans",
+   "summary": "List VM plans",
+   "description": "Source: Liara CLI (commands/vm/create.js).",
+   "body": null
+  },
+  {
+   "service": "paas",
+   "method": "GET",
+   "path": "/v2/projects/{name}/logs",
+   "summary": "Get runtime logs of an app (v2)",
+   "description": "Current logs endpoint (v1 /logs only answers 'please upgrade your client'). Query: start (unix seconds), direction=forward, last_lines=false, optional releaseId. Response data[].values = [[timestamp ns, JSON string {_entry, type}]]. Source: Liara CLI (commands/app/logs.js).",
+   "body": null
+  },
+  {
+   "service": "paas",
+   "method": "GET",
+   "path": "/v2/releases/{id}/build-logs",
+   "summary": "Get build logs of a release",
+   "description": "Build output of a deploy: { release: {state, failReason}, buildOutput: [{stream: STDOUT|STDERR, line, createdAt}] }; query since = createdAt of the last line seen. Release states seen in the CLI: BUILDING, PUSHING, DEPLOYING, READY, FAILED, UNHEALTHY, CANCELED, TIMEDOUT. Source: Liara CLI (services/build-logs.js).",
+   "body": null
+  },
+  {
+   "service": "paas",
+   "method": "POST",
+   "path": "/v2/releases/{id}/cancel",
+   "summary": "Cancel a running build",
+   "description": "Source: Liara CLI (services/cancel-deployment.js).",
+   "body": null
+  }
+ ],
+ "overrides": [
+  {
+   "method": "POST",
+   "path": "/v1/projects",
+   "note": "Required in practice (Liara CLI commands/app/create.js): planID from GET /v1/me plans.projects (g2 plans, available, region iran), bundlePlanID = an available key of plans.projectBundlePlans[planID], network = an _id from GET /v1/networks. platform one of node, laravel, php, python, django, flask, dotnet, react, angular, vue, static, docker, next, go.",
+   "schema": {
+    "name": "string - required",
+    "platform": "string - required",
+    "planID": "string - required",
+    "bundlePlanID": "string - required",
+    "network": "string - required network _id",
+    "readOnlyRootFilesystem": "boolean"
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/v1/databases",
+   "note": "Required in practice (Liara CLI commands/db/create.js): type is a key of GET /v1/me databaseVersions (postgres, mysql, mariadb, mongodb, redis, mssql, elasticsearch, rabbitmq, clickhouse); version is one of databaseVersions[type][].value; planID from plans.databases (g2, available, supports includes type); bundlePlanID = an available key of plans.databaseBundlePlans[planID]; network = an _id from GET /v1/networks.",
+   "schema": {
+    "hostname": "string - required",
+    "type": "string - required",
+    "version": "string - required",
+    "planID": "string - required",
+    "bundlePlanID": "string - required",
+    "network": "string - required network _id",
+    "publicNetwork": "boolean - required"
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/api/v1/buckets",
+   "note": "Liara CLI commands/bucket/create.js: plan from GET /v1/me plans, permission public|private.",
+   "schema": {
+    "name": "string - required",
+    "plan": "string - required",
+    "permission": "string - public or private"
+   }
+  },
+  {
+   "method": "POST",
+   "path": "/v2/projects/{name}/releases",
+   "note": "Docker image deploys (Liara CLI commands/deploy.js): body may contain image (e.g. ghcr.io/org/app:tag), port, type 'docker', envs [{key,value}], disks [{name,mountTo}], args [string], build {cache,args,dockerfile,location}, message.",
+   "schema": {
+    "type": "string - platform, 'docker' for images",
+    "port": "number",
+    "image": "string - docker image (instead of sourceID)",
+    "sourceID": "string - from the sources upload",
+    "envs": [
+     {
+      "key": "string",
+      "value": "string"
+     }
+    ],
+    "disks": [
+     {
+      "name": "string",
+      "mountTo": "string"
+     }
+    ],
+    "args": [
+     "string"
+    ]
+   }
+  }
+ ]
+}
